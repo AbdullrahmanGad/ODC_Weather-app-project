@@ -1,53 +1,25 @@
-- name: Deploy Docker container to target machines
-  hosts: all
+---
+- hosts: all
   become: yes
-  vars:
-    docker_image: "abdelrahmangad275/weather_app:1.0.0"
-
   tasks:
-    - name: Add Docker CE repository
-      yum_repository:
-        name: docker-ce-stable
-        description: Docker CE Stable - $basearch
-        baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
-        enabled: 1
-        gpgcheck: 1
-        gpgkey: https://download.docker.com/linux/centos/gpg
-
     - name: Install Docker
       yum:
-        name: docker-ce
+        name: docker
         state: present
-        update_cache: yes
 
-    - name: Start Docker service
+    - name: Start and enable Docker service
       service:
         name: docker
         state: started
         enabled: yes
 
-    - name: Pull Docker image
+    - name: Pull Docker image from Docker Hub
       docker_image:
-        name: "{{ docker_image }}"
+        name: "{{ docker_image_name }}"
         source: pull
 
     - name: Run Docker container
       docker_container:
-        name: weather_app
-        image: "{{ docker_image }}"
+        name: my_container
+        image: "{{ docker_image_name }}"
         state: started
-        ports:
-          - "8081:80"
-
-    - name: Open port 8081
-      firewalld:
-        port: 8081/tcp
-        permanent: yes
-        state: enabled
-      notify: reload firewall
-
-  handlers:
-    - name: reload firewall
-      service:
-        name: firewalld
-        state: reloaded
