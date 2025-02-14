@@ -7,8 +7,8 @@
 
   tasks:
     - name: Install Docker
-      apt:
-        name: docker.io
+      yum:
+        name: docker
         state: present
         update_cache: yes
 
@@ -29,4 +29,4 @@
         image: "{{ docker_image }}"
         state: started
         ports:
-          - "8081:80" 
+          -
