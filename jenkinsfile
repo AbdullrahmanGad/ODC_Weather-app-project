@@ -2,25 +2,28 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('my_repo12345')
+        DOCKER_HUB_CREDENTIALS = credentials('my_repo12345') 
+        ANSIBLE_HOST_KEY_CHECKING = 'False'
     }
 
     stages {
         stage('Checkout') {
             steps {
+                // Pulling code from Git repo.
                 git credentialsId: 'AbdullrahmanGad12345', url: 'https://github.com/AbdullrahmanGad/ODC_project.git', branch: 'main'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build') {
             steps {
-                script { 
+                script {
+                    // Build Docker image
                     dockerImage = docker.build("abdelrahmangad275/weather_app:1.0.0")
                 }
             }
         }
 
-        stage('Push Docker Image to Docker Hub') {
+        stage('Pushing Docker Image') {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'my_repo12345') {
@@ -29,11 +32,26 @@ pipeline {
                 }
             }
         }
+
+        stage('Run Ansible Playbook') {
+            steps {
+                script {
+                    echo "Running Ansible Playbook"
+
+                    // Setting permissions for private keys
+                    sh "chmod 600 /home/abdelrahman-gad/ODC_project/private_key1"
+                    sh "chmod 600 /home/abdelrahman-gad/ODC_project/private_key2"
+
+                    // Run Ansible playbook
+                    sh "ansible-playbook -i inventory playbook.yaml"
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo 'Docker image built and pushed to DockerHub successfully!'
+            echo 'Pipeline executed successfully!'
         }
         failure {
             echo 'Pipeline failed!'
