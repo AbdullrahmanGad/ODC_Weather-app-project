@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('my_repo12345') 
-        ANSIBLE_HOST_KEY_CHECKING = 'False'
     }
 
     stages {
@@ -41,7 +40,8 @@ pipeline {
                     // Setting permissions for private keys
                     sh "chmod 600 /home/abdelrahman-gad/ODC_project/private_key1"
                     sh "chmod 600 /home/abdelrahman-gad/ODC_project/private_key2"
-
+                    ANSIBLE_HOST_KEY_CHECKING = 'False'
+			
                     // Run Ansible playbook
                     sh "ansible-playbook -i inventory playbook.yaml"
                 }
