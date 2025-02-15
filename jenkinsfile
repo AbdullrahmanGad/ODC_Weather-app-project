@@ -8,16 +8,15 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Pulling code from Git repo.
                 git credentialsId: 'AbdullrahmanGad12345', url: 'https://github.com/AbdullrahmanGad/ODC_project.git', branch: 'main'
-                sh "ls -l ${WORKSPACE}"  // Verify the workspace contents
+                sh "ls -l ${WORKSPACE}"  
             }
         }
 
         stage('Build') {
             steps {
                 script {
-                    // Build Docker image
+                    
                     dockerImage = docker.build("abdelrahmangad275/weather_app:latest")
                 }
             }
@@ -27,7 +26,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'my_repo12345') {
-                        dockerImage.push()
+                       
+                        dockerImage.push('latest')
                     }
                 }
             }
@@ -38,11 +38,9 @@ pipeline {
                 script {
                     echo "Running Ansible Playbook"
 
-                    
                     sh "chmod 600 ./private_key1"
                     sh "chmod 600 ./private_key2"
-                    sh "export ANSIBLE_HOST_KEY_CHECKING=False"
-                    sh "ansible-playbook -i inventory playbook.yaml"
+                    sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory playbook.yaml"
                 }
             }
         }
