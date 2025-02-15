@@ -1,34 +1,32 @@
 ---
 - name: Set up Docker and deploy application on target machines
-  hosts: all  # Run this playbook on all hosts defined in the inventory
-  become: yes  # Execute tasks with elevated privileges (sudo)
+  hosts: all
+  become: yes
 
   tasks:
-    # Task 0: Install Python (if not already installed)
+    # Task 0: Ensure Python is installed
     - name: Ensure Python is installed
-      raw: sudo yum install -y python3
+      package:
+        name: python3
+        state: present
       when: ansible_python_interpreter is not defined
-      # The `raw` module is used to execute commands directly on the target host.
-      # This is necessary because Ansible requires Python to run its modules.
-      # Once Python is installed, Ansible can use its regular modules for subsequent tasks.
 
-    # Task 1: Update the yum package cache
+    # Task 1: Update yum cache
     - name: Update yum cache
       yum:
+        name: "*"
         update_cache: yes
-      # This ensures that the package list is up-to-date before installing any packages.
 
-    # Task 2: Install required system packages for Docker
+    # Task 2: Install required system packages
     - name: Install required system packages
       yum:
         name:
-          - yum-utils  # Provides utilities for managing yum repositories
-          - device-mapper-persistent-data  # Required for Docker storage
-          - lvm2  # Logical Volume Manager (required for Docker storage)
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
         state: present
-      # These packages are prerequisites for adding and using the Docker repository.
 
-    # Task 3: Add Docker's official repository
+    # Task 3: Add Docker repository
     - name: Add Docker repository
       yum_repository:
         name: docker-ce
@@ -37,46 +35,41 @@
         gpgcheck: yes
         gpgkey: https://download.docker.com/linux/centos/gpg
         enabled: yes
-      # This adds the Docker repository to the system's package sources, allowing yum to install Docker.
 
-    # Task 4: Install Docker Community Edition (CE)
+    # Task 4: Install Docker
     - name: Install Docker
       yum:
         name: docker-ce
         state: present
-      # This installs the Docker Community Edition, which is the free version of Docker.
-    - name: Check Docker version on CentOS
-      hosts: all
-      become: yes
-      tasks:
-    	- name: Run docker --version command
-      	  command: docker --version
-      	  register: docker_version
 
-    	- name: Display Docker version
-      	  debug:
-            msg: "{{ docker_version.stdout }}"  
+    # Task 5: Check Docker version
+    - name: Check Docker version
+      command: docker --version
+      register: docker_version
 
-    # Task 5: Ensure the Docker service is running and enabled on boot
+    - name: Display Docker version
+      debug:
+        msg: "{{ docker_version.stdout }}"
+
+    # Task 6: Ensure Docker service is running
     - name: Ensure Docker service is running
       service:
         name: docker
         state: started
         enabled: yes
-      # This ensures that the Docker service is running and will start automatically on system boot.
 
-    # Task 6: Pull the Docker image from Docker Hub
+    # Task 7: Pull Docker image
     - name: Pull Docker image from Docker Hub
-      docker_image_pull:
+      docker_image:
         name: abdelrahmangad275/weather_app:latest
-      
+        source: pull
 
-    # Task 7: Run the Docker container from the pulled image
+    # Task 8: Run Docker container
     - name: Run Docker container
       docker_container:
         name: weather-app
         image: abdelrahmangad275/weather_app:latest
         state: started
         ports:
-          - "8081:80"  # Map host port 8080 to container port 80
-      # This runs a Docker container using the specified image and maps port 8080 on the host to port 80 in the container.
+          - "8081:80"
+        restart_policy: always
