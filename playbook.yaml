@@ -11,60 +11,60 @@
         state: present
       when: ansible_python_interpreter is not defined
 
-    # Task 1: Update yum cache
-    - name: Update yum cache
+    # Task 1: Remove conflicting podman-docker package
+    - name: Remove podman-docker to avoid conflicts
       yum:
+        name: podman-docker
+        state: absent
+
+    # Task 2: Remove conflicting centos-release-autosd package
+    - name: Remove conflicting centos-release-autosd package
+      yum:
+        name: centos-release-autosd
+        state: absent
+
+    # Task 3: Update dnf cache
+    - name: Update dnf cache
+      dnf:
         name: "*"
         update_cache: yes
 
-    # Task 2: Install required system packages
+    # Task 4: Install required system packages
     - name: Install required system packages
-      yum:
+      dnf:
         name:
           - yum-utils
           - device-mapper-persistent-data
           - lvm2
         state: present
 
-    # Task 3: Add Docker repository
-    - name: Add Docker repository
-      yum_repository:
-        name: docker-ce
-        description: Docker CE Repository
-        baseurl: https://download.docker.com/linux/centos/{{ ansible_distribution_major_version }}/$basearch/stable
-        gpgcheck: yes
-        gpgkey: https://download.docker.com/linux/centos/gpg
-        enabled: yes
+    # Task 5: Add Docker repository manually
+    - name: Add Docker repository manually
+      shell: |
+        dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+      args:
+        creates: /etc/yum.repos.d/docker-ce.repo
 
-    # Task 4: Install Docker
+    # Task 6: Install Docker
     - name: Install Docker
-      yum:
+      dnf:
         name: docker-ce
         state: present
 
-    # Task 5: Check Docker version
-    - name: Check Docker version
-      command: docker --version
-      register: docker_version
-
-    - name: Display Docker version
-      debug:
-        msg: "{{ docker_version.stdout }}"
-
-    # Task 6: Ensure Docker service is running
+    # Task 7: Ensure Docker service is running
     - name: Ensure Docker service is running
       service:
         name: docker
         state: started
         enabled: yes
 
-    # Task 7: Pull Docker image
+    # Task 8: Pull Docker image
     - name: Pull Docker image from Docker Hub
       docker_image:
         name: abdelrahmangad275/weather_app:latest
         source: pull
 
-    # Task 8: Run Docker container
+    # Task 9: Run Docker container
     - name: Run Docker container
       docker_container:
         name: weather-app
