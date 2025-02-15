@@ -45,6 +45,17 @@
         name: docker-ce
         state: present
       # This installs the Docker Community Edition, which is the free version of Docker.
+    - name: Check Docker version on CentOS
+      hosts: all
+      become: yes
+      tasks:
+    	- name: Run docker --version command
+      	  command: docker --version
+      	  register: docker_version
+
+    	- name: Display Docker version
+      	  debug:
+            msg: "{{ docker_version.stdout }}"  
 
     # Task 5: Ensure the Docker service is running and enabled on boot
     - name: Ensure Docker service is running
@@ -56,10 +67,9 @@
 
     # Task 6: Pull the Docker image from Docker Hub
     - name: Pull Docker image from Docker Hub
-      docker_image:
+      docker_image_pull:
         name: abdelrahmangad275/weather_app:latest
-        source: pull
-      # This pulls the specified Docker image from Docker Hub to the target machine.
+      
 
     # Task 7: Run the Docker container from the pulled image
     - name: Run Docker container
