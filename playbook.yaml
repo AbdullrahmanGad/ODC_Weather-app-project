@@ -1,6 +1,6 @@
 ---
 - name: Deploying the app
-  hosts: centos
+  hosts: all
   become: true
   tasks:
     # - name: updating packages
