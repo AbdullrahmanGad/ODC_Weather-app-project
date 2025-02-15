@@ -1,10 +1,29 @@
 ---
-- hosts: all
-  become: yes
+- name: Install Docker, pull image, and run container on target machines
+  hosts: all
+  become: yes  # Run tasks with elevated privileges (sudo)
   tasks:
-    - name: Install Docker
+    - name: Remove podman-docker package (if installed)
       yum:
-        name: docker
+        name: podman-docker
+        state: absent
+
+    - name: Install required packages
+      yum:
+        name:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+        state: present
+
+    - name: Add Docker repository
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Install Docker CE
+      yum:
+        name: docker-ce
         state: present
 
     - name: Start and enable Docker service
@@ -15,11 +34,13 @@
 
     - name: Pull Docker image from Docker Hub
       docker_image:
-        name: "{{ docker_image_name }}"
+        name: abdelrahmangad275/weather_app:1.0.0  # Replace with your image name
         source: pull
 
-    - name: Run Docker container
+    - name: Run Docker container from the pulled image
       docker_container:
-        name: my_container
-        image: "{{ docker_image_name }}"
+        name: weather_app_container  # Replace with your desired container name
+        image: abdelrahmangad275/weather_app:1.0.0  # Replace with your image name
         state: started
+        ports:
+          - "81:80"  # Map host port 80 to container port 80
