@@ -1,3 +1,4 @@
+---
 - name: Deploying the app 
    hosts: centos 
    become: true 
