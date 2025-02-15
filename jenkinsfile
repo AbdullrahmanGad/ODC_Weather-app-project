@@ -44,7 +44,7 @@ pipeline {
                     env.ANSIBLE_HOST_KEY_CHECKING = 'False'
 			
                     // Run Ansible playbook
-                    sh "ansible-playbook -i inventory playbook.yaml --private-key=/var/lib/jenkins/.ssh/private_key1"
+                    sh "ansible-playbook -i inventory playbook.yaml"
                 }
             }
         }
