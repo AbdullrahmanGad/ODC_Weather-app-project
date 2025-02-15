@@ -10,6 +10,7 @@ pipeline {
             steps {
                 // Pulling code from Git repo.
                 git credentialsId: 'AbdullrahmanGad12345', url: 'https://github.com/AbdullrahmanGad/ODC_project.git', branch: 'main'
+                sh "ls -l ${WORKSPACE}"  // Verify the workspace contents
             }
         }
 
@@ -38,8 +39,8 @@ pipeline {
                     echo "Running Ansible Playbook"
 
                     // Setting permissions for private keys
-                    sh "chmod 600 /home/abdelrahman-gad/ODC_project/private_key1"
-                    sh "chmod 600 /home/abdelrahman-gad/ODC_project/private_key2"
+                    sh "chmod 600 ${WORKSPACE}/private_key1"
+                    sh "chmod 600 ${WORKSPACE}/private_key2"
                     ANSIBLE_HOST_KEY_CHECKING = 'False'
 			
                     // Run Ansible playbook
