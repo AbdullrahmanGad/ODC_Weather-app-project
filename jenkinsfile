@@ -41,7 +41,7 @@ pipeline {
                     
                     sh "chmod 600 ${WORKSPACE}/private_key1"
                     sh "chmod 600 ${WORKSPACE}/private_key2"
-                    sh "export ANSIBLE_HOST_KEY_CHECKING =False"
+                    sh "export ANSIBLE_HOST_KEY_CHECKING=False"
                     sh "ansible-playbook -i inventory playbook.yaml"
                 }
             }
