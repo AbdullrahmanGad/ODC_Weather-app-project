@@ -34,13 +34,13 @@
 
     - name: Pull Docker image from Docker Hub
       docker_image:
-        name: abdelrahmangad275/weather_app:1.0.0  # Replace with your image name
+        name: abdelrahmangad275/weather_app:latest # Replace with your image name
         source: pull
 
     - name: Run Docker container from the pulled image
       docker_container:
         name: weather_app_container  # Replace with your desired container name
-        image: abdelrahmangad275/weather_app:1.0.0  # Replace with your image name
+        image: abdelrahmangad275/weather_app:latest  # Replace with your image name
         state: started
         ports:
           - "81:80"  # Map host port 80 to container port 80
