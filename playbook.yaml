@@ -1,75 +1,53 @@
----
-- name: Set up Docker and deploy application on target machines
-  hosts: all
-  become: yes
-
-  tasks:
-    # Task 0: Ensure Python is installed
-    - name: Ensure Python is installed
-      package:
-        name: python3
-        state: present
-      when: ansible_python_interpreter is not defined
-
-    # Task 1: Remove conflicting podman-docker package
-    - name: Remove podman-docker to avoid conflicts
-      yum:
-        name: podman-docker
-        state: absent
-
-    # Task 2: Remove conflicting centos-release-autosd package
-    - name: Remove conflicting centos-release-autosd package
-      yum:
-        name: centos-release-autosd
-        state: absent
-
-    # Task 3: Update dnf cache
-    - name: Update dnf cache
-      dnf:
-        name: "*"
-        update_cache: yes
-
-    # Task 4: Install required system packages
-    - name: Install required system packages
-      dnf:
-        name:
-          - yum-utils
-          - device-mapper-persistent-data
-          - lvm2
-        state: present
-
-    # Task 5: Add Docker repository manually
-    - name: Add Docker repository manually
-      shell: |
-        dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-      args:
-        creates: /etc/yum.repos.d/docker-ce.repo
-
-    # Task 6: Install Docker
-    - name: Install Docker
-      dnf:
-        name: docker-ce
-        state: present
-
-    # Task 7: Ensure Docker service is running
-    - name: Ensure Docker service is running
-      service:
-        name: docker
-        state: started
-        enabled: yes
-
-    # Task 8: Pull Docker image
-    - name: Pull Docker image from Docker Hub
-      docker_image:
-        name: abdelrahmangad275/weather_app:latest
-        source: pull
-
-    # Task 9: Run Docker container
-    - name: Run Docker container
-      docker_container:
-        name: weather-app
-        image: abdelrahmangad275/weather_app:latest
-        state: started
-        ports:
-          - "8081:80"
-        restart_policy: always
+- name: Deploying the app 
+   hosts: centos 
+   become: true 
+   tasks: 
+     #- name: updating packages 
+     #  yum: 
+     #    name: "*" 
+     #    state: latest 
+  
+     - name: Ensure prerequisites are installed 
+       yum: 
+         name: 
+           - yum-utils 
+           - device-mapper-persistent-data 
+           - lvm2 
+         state: present 
+  
+     - name: Add Docker repository 
+       command: > 
+         yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo 
+       args: 
+         creates: /etc/yum.repos.d/docker-ce.repo 
+  
+     - name: installing docker 
+       yum:  
+         name: docker-ce 
+         state: present 
+      
+     - name: start docker 
+       service: 
+         name: docker 
+         state: started 
+         enabled: true 
+  
+     - name: Adjusting User 
+       user: 
+         name: "{{ ansible_user }}" 
+         groups: docker 
+         append: yes 
+  
+     - name: Pulling the Image 
+       docker_image: 
+         name: abdelrahmangad275/weather_app:latest 
+         source: pull  
+      
+     - name: Running Contianers 
+       docker_container:  
+         name: weather-app-container 
+         image: abdelrahmangad275/weather_app:latest 
+         state: started 
+         ports: 
+           - "5000:5000" 
+         restart_policy: always
