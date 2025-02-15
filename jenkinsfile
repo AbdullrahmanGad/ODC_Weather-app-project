@@ -41,10 +41,12 @@ pipeline {
                     // Setting permissions for private keys
                     sh "chmod 600 ${WORKSPACE}/private_key1"
                     sh "chmod 600 ${WORKSPACE}/private_key2"
-                    export ANSIBLE_HOST_KEY_CHECKING = 'False'
-			
-                    // Run Ansible playbook
-                    sh "ansible-playbook -i inventory playbook.yaml"
+                    env.ANSIBLE_HOST_KEY_CHECKING = 'False'
+                    // Use sshagent to load the private key
+                    sshagent(credentials: ['ansible_ssh_key']) {
+                        // Run Ansible playbook
+                        sh "ansible-playbook -i inventory playbook.yaml"
+                    }
                 }
             }
         }
