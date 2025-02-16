@@ -1,3 +1,3 @@
 [vagrant-machines]
 192.168.56.109 ansible_user=vagrant ansible_private_key_file=/var/lib/jenkins/workspace/Build-and-deploy-simple-weather-web-application-Using-CI/private_key1
-192.168.56.110 ansible_user=vagrant ansible_private_key_file=/var/lib/jenkins/workspace/Build-and-deploy-simple-weather-web-application-Using-CI/private_key2
+192.168.56.112 ansible_user=vagrant ansible_private_key_file=/var/lib/jenkins/workspace/Build-and-deploy-simple-weather-web-application-Using-CI/private_key2
