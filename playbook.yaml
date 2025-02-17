@@ -1,54 +1,30 @@
 ---
-- name: Deploying the app
+- name: Install Docker, pull image, and run container
   hosts: all
-  become: true
+  become: yes
   tasks:
-    # - name: updating packages
-    #   yum:
-    #     name: "*"
-    #     state: latest
-
-    - name: Ensure prerequisites are installed
-      yum:
-        name:
-          - yum-utils
-          - device-mapper-persistent-data
-          - lvm2
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
         state: present
+        update_cache: yes
 
-    - name: Add Docker repository
-      command: >
-        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-      args:
-        creates: /etc/yum.repos.d/docker-ce.repo
-
-    - name: Installing Docker
-      yum:
-        name: docker-ce
-        state: present
-
-    - name: Start Docker
+    - name: Ensure Docker service is running and enabled
       service:
         name: docker
         state: started
-        enabled: true
+        enabled: yes
 
-    - name: Adjusting User
-      user:
-        name: "{{ ansible_user }}"
-        groups: docker
-        append: yes
-
-    - name: Pulling the Image
+    - name: Pull Docker image from Docker Hub
       docker_image:
         name: abdelrahmangad275/weather_app:latest
         source: pull
+        state: present
 
-    - name: Running Containers
+    - name: Run Docker container from the pulled image
       docker_container:
-        name: weather-app-container
+        name: weather_app
         image: abdelrahmangad275/weather_app:latest
         state: started
         ports:
-          - "5000:5000"
-        restart_policy: always
+          - "5000:80"

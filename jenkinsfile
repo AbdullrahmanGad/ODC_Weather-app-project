@@ -38,8 +38,8 @@ pipeline {
                 script {
                     echo "Running Ansible Playbook"
 
-                    sh "chmod 600 ./private_key1"
-                    sh "chmod 600 ./private_key2"
+                    sh "chmod 600 ./vagrant/private_key1"
+                    sh "chmod 600 ./vagrant/private_key2"
                     sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory playbook.yaml"
                 }
             }
