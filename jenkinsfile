@@ -60,7 +60,7 @@ pipeline {
                     Pipeline '${env.JOB_NAME}' (${env.BUILD_NUMBER}) completed successfully.
                     Check the build details at: ${env.BUILD_URL}
                 """,
-                to: 'team@example.com', // Replace with your team's email
+                to: 'abdelrahman.gad.275@gmail.com', // Replace with your team's email
                 attachLog: false
             )
         }
@@ -73,7 +73,7 @@ pipeline {
                     Pipeline '${env.JOB_NAME}' (${env.BUILD_NUMBER}) failed.
                     Check the build details at: ${env.BUILD_URL}
                 """,
-                to: 'team@example.com', // Replace with your team's email
+                to: 'abdelrahman.gad.275@gmail.com', // Replace with your team's email
                 attachLog: true // Attach the build log for debugging
             )
         }
