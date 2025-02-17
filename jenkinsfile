@@ -2,32 +2,33 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('my_repo12345') 
+        DOCKER_HUB_CREDENTIALS = credentials('my_repo12345') // Docker Hub credentials
     }
 
     stages {
         stage('Checkout') {
             steps {
                 git credentialsId: 'AbdullrahmanGad12345', url: 'https://github.com/AbdullrahmanGad/ODC_project.git', branch: 'main'
-                sh "ls -l ${WORKSPACE}"  
+                sh "ls -l ${WORKSPACE}"  // List workspace files for debugging
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    
-                    dockerImage = docker.build("abdelrahmangad275/weather_app:latest")
+                    // Build Docker image with a tag
+                    dockerImage = docker.build("abdelrahmangad275/weather_app:${env.BUILD_ID}")
                 }
             }
         }
 
-        stage('Pushing Docker Image') {
+        stage('Push Docker Image') {
             steps {
                 script {
+                    // Push Docker image to Docker Hub
                     docker.withRegistry('https://registry.hub.docker.com', 'my_repo12345') {
-                       
-                        dockerImage.push('latest')
+                        dockerImage.push("${env.BUILD_ID}") // Push with build ID as tag
+                        dockerImage.push('latest') // Also push as 'latest'
                     }
                 }
             }
@@ -38,8 +39,11 @@ pipeline {
                 script {
                     echo "Running Ansible Playbook"
 
+                    // Set permissions for private keys
                     sh "chmod 600 ./vagrant/private_key1"
                     sh "chmod 600 ./vagrant/private_key2"
+
+                    // Run Ansible playbook
                     sh "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory playbook.yaml"
                 }
             }
@@ -49,9 +53,29 @@ pipeline {
     post {
         success {
             echo 'Pipeline executed successfully!'
+            // Send email notification on success
+            emailext (
+                subject: "SUCCESS: Pipeline '${env.JOB_NAME}' (${env.BUILD_NUMBER})",
+                body: """
+                    Pipeline '${env.JOB_NAME}' (${env.BUILD_NUMBER}) completed successfully.
+                    Check the build details at: ${env.BUILD_URL}
+                """,
+                to: 'team@example.com', // Replace with your team's email
+                attachLog: false
+            )
         }
         failure {
             echo 'Pipeline failed!'
+            // Send email notification on failure
+            emailext (
+                subject: "FAILURE: Pipeline '${env.JOB_NAME}' (${env.BUILD_NUMBER})",
+                body: """
+                    Pipeline '${env.JOB_NAME}' (${env.BUILD_NUMBER}) failed.
+                    Check the build details at: ${env.BUILD_URL}
+                """,
+                to: 'team@example.com', // Replace with your team's email
+                attachLog: true // Attach the build log for debugging
+            )
         }
     }
 }
