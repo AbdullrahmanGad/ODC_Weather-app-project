@@ -29,15 +29,15 @@ This project streamlines the deployment of a Python-based Weather App by leverag
 - (Success/Failure): Sends email notifications on success or failure of the pipeline execution.
 
 ![pipeline](https://github.com/user-attachments/assets/0d19a4f5-7972-4d4d-b698-fcfd74313bfe)  
-# Final Outcome :-  
+# Final Outcome :-    
 
-![mm01](https://github.com/user-attachments/assets/535e9c6a-3dc9-4161-89ef-00c1d8999f43) ![mm02](https://github.com/user-attachments/assets/97a3d5fa-912c-4012-94d7-e7a1280e2d2b)  
+![image (1)](https://github.com/user-attachments/assets/33a9e262-d305-4a96-b3dc-58be966ea8f7)
+
 
 # Email Notifications :-  
-The Jenkins pipeline is set up to send email notifications to developers regarding the build status. If the deployment is successful, an email is triggered with a success message. In case of a build failure, an email is sent With Buildlogs attached , which can assist developers in troubleshooting and debugging the issue.
+The Jenkins pipeline is set up to send email notifications to developers regarding the build status. If the deployment is successful, an email is triggered with a success message. In case of a build failure, an email is sent With Buildlogs attached , which can assist developers in troubleshooting and debugging the issue.  
 
-![successs](https://github.com/user-attachments/assets/9b5f5ee5-094a-443f-a94a-f398c5aea357)![Faill](https://github.com/user-attachments/assets/7bb00b7a-296f-47a6-b8b6-7792486d41df)
-
+![image](https://github.com/user-attachments/assets/c990a456-6b2f-4cec-ad8b-38ff7eacb285)
 
 
 
