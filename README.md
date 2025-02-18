@@ -34,8 +34,9 @@ This project streamlines the deployment of a Python-based Weather App by leverag
 ![image (1)](https://github.com/user-attachments/assets/33a9e262-d305-4a96-b3dc-58be966ea8f7)
 
 
-# Email Notifications :-  
-The Jenkins pipeline is set up to send email notifications to developers regarding the build status. If the deployment is successful, an email is triggered with a success message. In case of a build failure, an email is sent With Buildlogs attached , which can assist developers in troubleshooting and debugging the issue.  
+# E-mail Notifications :-  
+The Jenkins pipeline is set up to send e-mail notifications to developers regarding the build status. If the deployment is successful, an e-mail is triggered with a success message. In case of a build failure, an e-mail is sent With Buildlogs attached , which can assist developers in troubleshooting and debugging the issue.  
+If you have any issues with E-mail Configuration check [This](https://pradeep-sg406.medium.com/how-to-configure-email-notification-in-jenkins-227b58d3c017/)   
 
 ![image](https://github.com/user-attachments/assets/c990a456-6b2f-4cec-ad8b-38ff7eacb285)
 
