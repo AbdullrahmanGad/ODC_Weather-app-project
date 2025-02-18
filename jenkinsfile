@@ -25,7 +25,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Push Docker image to Docker Hub
+                    
                     docker.withRegistry('https://registry.hub.docker.com', 'my_repo12345') {
                         dockerImage.push("${env.BUILD_ID}") // Push with build ID as tag
                         dockerImage.push('latest') // Also push as 'latest'
